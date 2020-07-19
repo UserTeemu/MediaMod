@@ -208,8 +208,10 @@ public class PlayerOverlay {
 
     @SubscribeEvent
     public void onGuiDraw(GuiScreenEvent.DrawScreenEvent event) {
-        if (event.getGui() instanceof GuiIngameMenu && Settings.SHOW_IN_PAUSE) {
-            this.drawPlayer(Settings.PLAYER_X, Settings.PLAYER_Y, Settings.MODERN_PLAYER_STYLE, false, Settings.PLAYER_ZOOM);
+        if (MediaHandler.instance.getCurrentService() != null && currentMediaInfo != null) {
+            if (event.getGui() instanceof GuiIngameMenu && Settings.SHOW_IN_PAUSE) {
+                this.drawPlayer(Settings.PLAYER_X, Settings.PLAYER_Y, Settings.MODERN_PLAYER_STYLE, false, Settings.PLAYER_ZOOM);
+            }
         }
     }
 
