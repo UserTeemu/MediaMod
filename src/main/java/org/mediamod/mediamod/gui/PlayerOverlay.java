@@ -231,7 +231,7 @@ public class PlayerOverlay {
 
         // Get a Minecraft Instance
         Minecraft mc = FMLClientHandler.instance().getClient();
-        mc.profiler.startSection("mediamod_player");
+        mc.mcProfiler.startSection("mediamod_player");
 
         // Establish a FontRenderer
         FontRenderer fontRenderer = mc.fontRenderer;
@@ -476,7 +476,7 @@ public class PlayerOverlay {
         }
 
         GlStateManager.popMatrix();
-        mc.profiler.endSection();
+        mc.mcProfiler.endSection();
     }
 
     /**

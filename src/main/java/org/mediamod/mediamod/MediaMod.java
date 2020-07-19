@@ -112,7 +112,7 @@ public class MediaMod {
         ClientCommandHandler.instance.registerCommand(new MediaModCommand());
         ClientCommandHandler.instance.registerCommand(new MediaModUpdateCommand());
 
-        mediamodDirectory = new File(FMLClientHandler.instance().getClient().gameDir, "mediamod");
+        mediamodDirectory = new File(FMLClientHandler.instance().getClient().mcDataDir, "mediamod");
         if (!mediamodDirectory.exists()) {
             logger.info("Creating necessary directories and files for first launch...");
             boolean mkdir = mediamodDirectory.mkdir();

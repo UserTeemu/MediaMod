@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mediamod.mediamod.MediaMod;
@@ -119,8 +120,8 @@ public class CoreMod {
 
     public void shutdown() {
         if (!Minecraft.getMinecraft().isSnooperEnabled() && secret.equals("")) return;
-        File updaterJar = new File(Minecraft.getMinecraft().gameDir, "mediamod/updater.jar");
-        File lockFile = new File(Minecraft.getMinecraft().gameDir, "mediamod/update.lock");
+        File updaterJar = new File(FMLClientHandler.instance().getClient().mcDataDir, "mediamod/updater.jar");
+        File lockFile = new File(FMLClientHandler.instance().getClient().mcDataDir, "mediamod/update.lock");
 
         if (updaterJar.exists() && lockFile.exists()) {
             try {
