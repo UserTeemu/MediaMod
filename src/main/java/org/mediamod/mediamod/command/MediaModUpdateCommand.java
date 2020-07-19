@@ -51,7 +51,7 @@ public class MediaModUpdateCommand extends CommandBase {
                 File updateJar = new File(MediaMod.INSTANCE.mediamodDirectory, "update.jar");
                 File updaterJar = new File(MediaMod.INSTANCE.mediamodDirectory, "updater.jar");
 
-                if(lockFile.exists() && updateJar.exists()) {
+                if (lockFile.exists() && updateJar.exists()) {
                     PlayerMessenger.sendMessage(ChatColor.GRAY + "It seems there was a previous update attempt that may have failed. Deleting previous files and attempting again!", true);
 
                     if (!updateJar.delete()) {
