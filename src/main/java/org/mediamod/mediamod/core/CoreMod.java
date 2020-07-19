@@ -119,24 +119,22 @@ public class CoreMod {
 
     public void shutdown() {
         if (!Minecraft.getMinecraft().isSnooperEnabled() && secret.equals("")) return;
-
-        String codeSourceLoc = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        String modJarPath = codeSourceLoc.substring(0, codeSourceLoc.indexOf("!")).substring(5);
-
         File updaterJar = new File(Minecraft.getMinecraft().gameDir, "mediamod/updater.jar");
         File lockFile = new File(Minecraft.getMinecraft().gameDir, "mediamod/update.lock");
 
         if(updaterJar.exists() && lockFile.exists()) {
             try {
+                String codeSourceLoc = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+                String modJarPath = codeSourceLoc.substring(0, codeSourceLoc.indexOf("!")).substring(5);
+
                 ProcessBuilder pb = new ProcessBuilder("java", "-jar", updaterJar.getAbsolutePath(), modJarPath);
                 pb.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (Exception ignored) {}
         }
 
         MediaMod.INSTANCE.logger.info("Shutting down CoreMod (" + modID + ")");
 
+        if (secret.equals("")) return;
         try {
             URL url = new URL(MediaMod.ENDPOINT + "api/offline");
 

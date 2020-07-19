@@ -1,6 +1,5 @@
 package org.mediamod.mediamod.command;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -52,11 +51,6 @@ public class MediaModCommand extends CommandBase {
         } else {
             String subcmd = args[0];
             if (subcmd.equalsIgnoreCase("party")) {
-                if (!Minecraft.getMinecraft().isSnooperEnabled()) {
-                    PlayerMessenger.sendMessage(ChatColor.RED + "You must enable Snooper in Minecraft Settings and restart your client to participate in a party!", true);
-                    return;
-                }
-
                 if (!MediaMod.INSTANCE.authenticatedWithAPI) {
                     PlayerMessenger.sendMessage(ChatColor.RED + "An error occurred when contacting the MediaMod API, Please click 'reconnect'. If this issue persists please contact us!", true);
                     return;
@@ -67,7 +61,7 @@ public class MediaModCommand extends CommandBase {
                         String function = args[1];
                         switch (function.toLowerCase()) {
                             case "start":
-                                if(SpotifyService.isLoggedOut()) {
+                                if (SpotifyService.isLoggedOut()) {
                                     PlayerMessenger.sendMessage(ChatColor.RED + "You must be logged into Spotify to join a party!", true);
                                     return;
                                 }
@@ -105,7 +99,7 @@ public class MediaModCommand extends CommandBase {
                                 break;
                             case "join":
                                 if (args.length >= 3) {
-                                    if(SpotifyService.isLoggedOut()) {
+                                    if (SpotifyService.isLoggedOut()) {
                                         PlayerMessenger.sendMessage(ChatColor.RED + "You must be logged into Spotify to join a party!", true);
                                         return;
                                     }
@@ -139,7 +133,6 @@ public class MediaModCommand extends CommandBase {
                 });
             }
         }
-
     }
 
     @Override

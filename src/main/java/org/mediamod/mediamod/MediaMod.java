@@ -1,7 +1,6 @@
 package org.mediamod.mediamod;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
@@ -28,7 +27,10 @@ import org.mediamod.mediamod.levelhead.LevelheadIntegration;
 import org.mediamod.mediamod.media.MediaHandler;
 import org.mediamod.mediamod.media.core.api.MediaInfo;
 import org.mediamod.mediamod.parties.PartyManager;
-import org.mediamod.mediamod.util.*;
+import org.mediamod.mediamod.util.ChatColor;
+import org.mediamod.mediamod.util.Metadata;
+import org.mediamod.mediamod.util.PlayerMessenger;
+import org.mediamod.mediamod.util.VersionChecker;
 
 import java.io.File;
 
@@ -74,6 +76,12 @@ public class MediaMod {
     public boolean authenticatedWithAPI = false;
 
     /**
+     * A File which points to the MediaMod Data directory
+     */
+    public File mediamodDirectory;
+
+
+    /**
      * Fired before Minecraft starts
      *
      * @param event - FMLPreInitializationEvent
@@ -104,10 +112,10 @@ public class MediaMod {
         ClientCommandHandler.instance.registerCommand(new MediaModCommand());
         ClientCommandHandler.instance.registerCommand(new MediaModUpdateCommand());
 
-        File MEDIAMOD_DIRECTORY = new File(FMLClientHandler.instance().getClient().gameDir, "mediamod");
-        if (!MEDIAMOD_DIRECTORY.exists()) {
+        mediamodDirectory = new File(FMLClientHandler.instance().getClient().gameDir, "mediamod");
+        if (!mediamodDirectory.exists()) {
             logger.info("Creating necessary directories and files for first launch...");
-            boolean mkdir = MEDIAMOD_DIRECTORY.mkdir();
+            boolean mkdir = mediamodDirectory.mkdir();
 
             if (mkdir) {
                 logger.info("Created necessary directories and files!");
@@ -138,24 +146,21 @@ public class MediaMod {
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (firstLoad && Minecraft.getMinecraft().player != null) {
-            if(!VersionChecker.INSTANCE.IS_LATEST_VERSION) {
-                PlayerMessenger.sendMessage("&cMediaMod is out of date!" +
-                        "\n&7Latest Version: &r&lv" + VersionChecker.INSTANCE.LATEST_VERSION_INFO.latestVersionS +
-                        "\n&7Changelog: &r&l" + VersionChecker.INSTANCE.LATEST_VERSION_INFO.changelog);
+            if (!VersionChecker.INSTANCE.IS_LATEST_VERSION) {
+                PlayerMessenger.sendMessage(ChatColor.RED + "MediaMod is out of date!", true);
+                PlayerMessenger.sendMessage(ChatColor.GRAY + "Latest Version: " + ChatColor.WHITE + VersionChecker.INSTANCE.LATEST_VERSION_INFO.latestVersionS);
+                PlayerMessenger.sendMessage(ChatColor.GRAY + "Your Version: " + ChatColor.WHITE + Metadata.VERSION);
+                PlayerMessenger.sendMessage(ChatColor.GRAY + "Changelog: " + ChatColor.WHITE + VersionChecker.INSTANCE.LATEST_VERSION_INFO.changelog);
 
-                ITextComponent urlComponent = new TextComponentString(ChatColor.GRAY + "" + ChatColor.BOLD + "Click this to automatically update now!");
+                TextComponentString urlComponent = new TextComponentString(ChatColor.GRAY + "Click this to automatically update now!");
                 urlComponent.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "mediamodupdate"));
                 urlComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(ChatColor.translateAlternateColorCodes('&',
-                        "&7Runs /mediamodupdate"))));
+                        "&7Runs /mmupdate"))));
                 PlayerMessenger.sendMessage(urlComponent);
             }
 
-            if(!authenticatedWithAPI) {
-                if(!Minecraft.getMinecraft().isSnooperEnabled()) {
-                    PlayerMessenger.sendMessage(ChatColor.GRAY + "Note: You have Minecraft Snooper disabled, this means services like Spotify and MediaMod Parties will not work. If you want these services then enable Minecraft Snooper and restart your client!", true);
-                } else {
-                    PlayerMessenger.sendMessage(ChatColor.RED + "Failed to authenticate with MediaMod API, this means services like Spotify will not work. Please click 'reconnect' in the MediaMod GUI!", true);
-                }
+            if (!authenticatedWithAPI) {
+                PlayerMessenger.sendMessage(ChatColor.RED + "Failed to authenticate with MediaMod API, this means services like Spotify will not work. Please click 'reconnect' in the MediaMod GUI!", true);
             }
 
             firstLoad = false;
