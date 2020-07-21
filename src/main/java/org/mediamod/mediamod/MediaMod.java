@@ -27,10 +27,7 @@ import org.mediamod.mediamod.levelhead.LevelheadIntegration;
 import org.mediamod.mediamod.media.MediaHandler;
 import org.mediamod.mediamod.media.core.api.MediaInfo;
 import org.mediamod.mediamod.parties.PartyManager;
-import org.mediamod.mediamod.util.ChatColor;
-import org.mediamod.mediamod.util.Metadata;
-import org.mediamod.mediamod.util.PlayerMessenger;
-import org.mediamod.mediamod.util.VersionChecker;
+import org.mediamod.mediamod.util.*;
 
 import java.io.File;
 
@@ -146,7 +143,7 @@ public class MediaMod {
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (firstLoad && Minecraft.getMinecraft().player != null) {
-            if (!VersionChecker.INSTANCE.isLatestVersion) {
+            if (!VersionChecker.INSTANCE.isLatestVersion && !Settings.ALWAYS_AUTOUPDATE) {
                 PlayerMessenger.sendMessage(ChatColor.RED + "MediaMod is out of date!", true);
                 PlayerMessenger.sendMessage(ChatColor.GRAY + "Latest Version: " + ChatColor.WHITE + VersionChecker.INSTANCE.latestVersionInformation.name);
                 PlayerMessenger.sendMessage(ChatColor.GRAY + "Your Version: " + ChatColor.WHITE + Metadata.VERSION);
@@ -157,6 +154,11 @@ public class MediaMod {
                 urlComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(ChatColor.translateAlternateColorCodes('&',
                         "&7Runs /mmupdate"))));
                 PlayerMessenger.sendMessage(urlComponent);
+            } else if (Settings.ALWAYS_AUTOUPDATE && !VersionChecker.INSTANCE.isLatestVersion) {
+                Multithreading.runAsync(() -> {
+                    UpdaterUtility utility = new UpdaterUtility();
+                    utility.scheduleUpdate();
+                });
             }
 
             if (!authenticatedWithAPI) {

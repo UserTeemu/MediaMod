@@ -65,14 +65,14 @@ public class BrowserService implements IServiceHandler {
      * This indicates if the handler is ready for usage
      */
     public boolean isReady() {
-        return server.getConnections().size() >= 1 && Settings.EXTENSION_ENABLED;
+        return server != null && server.getConnections() != null && server.getConnections().size() >= 1 && Settings.EXTENSION_ENABLED;
     }
 
     /**
      * The priority of the service, this indicates if the mod should use this service instead of another if they are both ready
      */
     public int getPriority() {
-        return 0;
+        return 1;
     }
 
     /**
@@ -165,6 +165,7 @@ public class BrowserService implements IServiceHandler {
         /**
          * Queries the extension for the current MediaInfo
          */
+        @SuppressWarnings("StatementWithEmptyBody")
         public MediaInfo getMediaInfo() {
             broadcast("Send");
 
