@@ -157,7 +157,7 @@ public class PlayerOverlay {
      */
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post event) {
-        if (event.type.equals(RenderGameOverlayEvent.ElementType.EXPERIENCE) && (Settings.SHOW_PLAYER || Settings.SHOW_IN_PAUSE) && Settings.ENABLED) {
+        if (event.getType().equals(RenderGameOverlayEvent.ElementType.EXPERIENCE) && (Settings.SHOW_PLAYER || Settings.SHOW_IN_PAUSE) && Settings.ENABLED) {
             // Make sure that a Service Handler exists and is ready
             currentMediaInfo = MediaHandler.instance.getCurrentMediaInfo();
             if (currentMediaInfo != null) {
