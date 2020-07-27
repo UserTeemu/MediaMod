@@ -10,10 +10,11 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import org.mediamod.mediamod.MediaMod;
+import org.mediamod.mediamod.api.APIHandler;
 import org.mediamod.mediamod.config.Settings;
-import org.mediamod.mediamod.gui.util.ButtonTooltip;
-import org.mediamod.mediamod.gui.util.CustomButton;
-import org.mediamod.mediamod.gui.util.IMediaGui;
+import org.mediamod.mediamod.gui.core.util.ButtonTooltip;
+import org.mediamod.mediamod.gui.core.util.CustomButton;
+import org.mediamod.mediamod.gui.core.util.IMediaGui;
 import org.mediamod.mediamod.media.MediaHandler;
 import org.mediamod.mediamod.media.services.spotify.SpotifyService;
 import org.mediamod.mediamod.util.ChatColor;
@@ -177,7 +178,7 @@ class GuiServices extends ButtonTooltip implements IMediaGui {
             case 5:
                 Multithreading.runAsync(() -> {
                     PlayerMessenger.sendMessage(ChatColor.GRAY + "Connecting to MediaMod API...", true);
-                    MediaMod.INSTANCE.authenticatedWithAPI = MediaMod.INSTANCE.coreMod.register();
+                    MediaMod.INSTANCE.authenticatedWithAPI = APIHandler.instance.connect();
 
                     if (MediaMod.INSTANCE.authenticatedWithAPI) {
                         PlayerMessenger.sendMessage(ChatColor.GREEN + "Connected!", true);

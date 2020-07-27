@@ -14,8 +14,9 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.mediamod.mediamod.config.ProgressStyle;
 import org.mediamod.mediamod.config.Settings;
-import org.mediamod.mediamod.gui.util.DynamicTextureWrapper;
-import org.mediamod.mediamod.gui.util.IMediaGui;
+import org.mediamod.mediamod.theming.PlayerThemeHandler;
+import org.mediamod.mediamod.gui.core.util.DynamicTextureWrapper;
+import org.mediamod.mediamod.gui.core.util.IMediaGui;
 import org.mediamod.mediamod.media.MediaHandler;
 import org.mediamod.mediamod.media.core.IServiceHandler;
 import org.mediamod.mediamod.media.core.api.MediaInfo;
@@ -263,7 +264,7 @@ public class PlayerOverlay {
             drawRect(cornerX + 150, cornerY + 5, cornerX + 5, cornerY + 50, color.darker().getRGB());
         } else {
             // Draw the background of the player
-            drawRect(cornerX + 150, cornerY + 5, cornerX + 5, cornerY + 50, Color.darkGray.getRGB());
+            drawRect(cornerX + 150, cornerY + 5, cornerX + 5, cornerY + 50, PlayerThemeHandler.INSTANCE.getPlayerColour().getRGB());
         }
 
         // Draw the metadata of the track (title, artist, album art)
@@ -316,10 +317,10 @@ public class PlayerOverlay {
                 }
 
                 // String concatenation for tracks
-                fontRenderer.drawString(concatName.substring(concatNameCount, concatNameCount2.get()), textXPosition, cornerY + 11, -1, false);
+                fontRenderer.drawString(concatName.substring(concatNameCount, concatNameCount2.get()), textXPosition, cornerY + 11, PlayerThemeHandler.INSTANCE.getPlayerTextColour().getRGB(), false);
             } else {
                 // Draw the track name normally
-                fontRenderer.drawString(trackName, textXPosition, cornerY + 11, -1, false);
+                fontRenderer.drawString(trackName, textXPosition, cornerY + 11, PlayerThemeHandler.INSTANCE.getPlayerTextColour().getRGB(), false);
             }
         }
 

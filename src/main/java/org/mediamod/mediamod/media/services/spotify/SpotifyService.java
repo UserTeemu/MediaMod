@@ -8,7 +8,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.mediamod.mediamod.MediaMod;
+import org.mediamod.mediamod.api.APIHandler;
 import org.mediamod.mediamod.config.Settings;
 import org.mediamod.mediamod.media.core.IServiceHandler;
 import org.mediamod.mediamod.media.core.api.MediaInfo;
@@ -16,7 +18,6 @@ import org.mediamod.mediamod.parties.PartyManager;
 import org.mediamod.mediamod.parties.meta.PartyMediaInfo;
 import org.mediamod.mediamod.util.*;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -86,7 +87,7 @@ public class SpotifyService implements IServiceHandler {
     }
 
     /**
-     * Initialises our API Wrapper if snooper is enabled
+     * Initialises our API Wrapper if we have authenticated with the MediaMod API
      */
     public boolean load() {
         if (MediaMod.INSTANCE.authenticatedWithAPI) {
@@ -100,13 +101,13 @@ public class SpotifyService implements IServiceHandler {
     }
 
     /**
-     * Retrieves the Spotify Client ID from the MediaMod API and sets the spotifyClientID to it
+     * Retrieves the Spotify Client ID from the MediaMod API
      */
     private void attemptToGetClientID() {
         try {
             JsonObject object = new JsonObject();
-            object.addProperty("secret", MediaMod.INSTANCE.coreMod.secret);
-            object.addProperty("uuid", MediaMod.INSTANCE.coreMod.getUUID());
+            object.addProperty("secret", APIHandler.instance.requestSecret);
+            object.addProperty("uuid", Minecraft.getMinecraft().getSession().getProfile().getId().toString());
 
             ClientIDResponse clientIDResponse = WebRequest.requestToMediaMod(WebRequestType.POST, "api/spotify/clientid", object, ClientIDResponse.class);
             if (clientIDResponse != null) {
@@ -252,8 +253,8 @@ class SpotifyAPI {
 
         JsonObject body = new JsonObject();
         body.addProperty("code", authCode);
-        body.addProperty("uuid", MediaMod.INSTANCE.coreMod.getUUID());
-        body.addProperty("secret", MediaMod.INSTANCE.coreMod.secret);
+        body.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        body.addProperty("secret", APIHandler.instance.requestSecret);
 
         try {
             SpotifyTokenResponse response = WebRequest.requestToMediaMod(WebRequestType.POST, "api/spotify/token", body, SpotifyTokenResponse.class);
@@ -289,8 +290,8 @@ class SpotifyAPI {
 
         JsonObject body = new JsonObject();
         body.addProperty("refresh_token", refreshToken);
-        body.addProperty("uuid", MediaMod.INSTANCE.coreMod.getUUID());
-        body.addProperty("secret", MediaMod.INSTANCE.coreMod.secret);
+        body.addProperty("uuid", Minecraft.getMinecraft().getSession().getProfile().getId().toString());
+        body.addProperty("secret", APIHandler.instance.requestSecret);
 
         try {
             SpotifyTokenResponse response = WebRequest.requestToMediaMod(WebRequestType.POST, "api/spotify/refresh", body, SpotifyTokenResponse.class);
@@ -322,28 +323,6 @@ class SpotifyAPI {
         Settings.REFRESH_TOKEN = "";
 
         Multithreading.runAsync(Settings::saveConfig);
-    }
-
-    /**
-     * Adds a track to the user's playback queue
-     *
-     * @param trackIdentifier: The identifier provided by Spotify
-     * @return true if the action was successful
-     * @see "https://developer.spotify.com/documentation/web-api/reference/player/add-to-queue/"
-     */
-    public boolean addTrackToQueue(@Nonnull String trackIdentifier) {
-        String trackUri = "spotify:track:" + trackIdentifier;
-
-        try {
-            int status = WebRequest.makeRequest(WebRequestType.POST, new URL("https://api.spotify.com/v1/me/player/queue?uri=" + trackUri), new HashMap<String, String>() {{
-                put("Authorization", "Bearer " + accessToken);
-            }});
-
-            return status == 204;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     /**
@@ -450,24 +429,6 @@ class SpotifyAPI {
             return status == 204;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Seeks to a specific time in the current track
-     *
-     * @param timestamp: The time in milliseconds
-     * @see "https://developer.spotify.com/documentation/web-api/reference/player/seek-to-position-in-currently-playing-track/"
-     */
-    public boolean seekToTimestamp(int timestamp) {
-        try {
-            int status = WebRequest.makeRequest(WebRequestType.POST, new URL("https://api.spotify.com/v1/me/player/seek?position_ms=" + timestamp), new HashMap<String, String>() {{
-                put("Authorization", "Bearer " + accessToken);
-            }});
-
-            return status == 204;
-        } catch (IOException ignored) {
             return false;
         }
     }

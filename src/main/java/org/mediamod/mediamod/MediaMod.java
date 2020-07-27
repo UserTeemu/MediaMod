@@ -15,10 +15,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mediamod.mediamod.api.APIHandler;
 import org.mediamod.mediamod.command.MediaModCommand;
 import org.mediamod.mediamod.command.MediaModUpdateCommand;
 import org.mediamod.mediamod.config.Settings;
-import org.mediamod.mediamod.core.CoreMod;
 import org.mediamod.mediamod.event.MediaInfoUpdateEvent;
 import org.mediamod.mediamod.gui.PlayerOverlay;
 import org.mediamod.mediamod.keybinds.KeybindInputHandler;
@@ -37,6 +37,7 @@ import java.io.File;
  * @author ConorTheDev
  * @see net.minecraftforge.fml.common.Mod
  */
+@SuppressWarnings("unused")
 @Mod(name = Metadata.NAME, modid = Metadata.MODID, version = Metadata.VERSION)
 public class MediaMod {
     /**
@@ -58,11 +59,6 @@ public class MediaMod {
     public final Logger logger = LogManager.getLogger("MediaMod");
 
     /**
-     * A CoreMod instance which assists with analytics
-     */
-    public final CoreMod coreMod = new CoreMod("mediamod");
-
-    /**
      * If this is the first load of MediaMod
      */
     private boolean firstLoad = true;
@@ -77,6 +73,11 @@ public class MediaMod {
      */
     public File mediamodDirectory;
 
+    /**
+     * A file that points to the MediaMod Themes Data directory
+     */
+
+    public File mediamodThemeDirectory;
 
     /**
      * Fired before Minecraft starts
@@ -110,28 +111,87 @@ public class MediaMod {
         ClientCommandHandler.instance.registerCommand(new MediaModUpdateCommand());
 
         mediamodDirectory = new File(FMLClientHandler.instance().getClient().mcDataDir, "mediamod");
+        mediamodThemeDirectory = new File(mediamodDirectory, "themes");
+
         if (!mediamodDirectory.exists()) {
-            logger.info("Creating necessary directories and files for first launch...");
+            logger.info("Creating mediamod directory...");
             boolean mkdir = mediamodDirectory.mkdir();
 
             if (mkdir) {
-                logger.info("Created necessary directories and files!");
+                logger.info("Created directory!");
             } else {
-                logger.fatal("Failed to create necessary directories and files!");
+                logger.fatal("Failed to create mediamod directory");
             }
         }
+
+        // Remove theming for this beta build because it's nowhere near ready for the betas
+        /*if (!mediamodThemeDirectory.exists()) {
+            boolean createdThemeDirectory = mediamodThemeDirectory.mkdir();
+            if (createdThemeDirectory) {
+                logger.info("Created theme directory!");
+                File defaultThemeFile = new File(mediamodThemeDirectory, "default.toml");
+                try {
+                    if (!defaultThemeFile.exists()) {
+                        if (defaultThemeFile.createNewFile()) {
+                            logger.info("Created default theme file");
+
+                            String defaultFile =
+                                    "[metadata]\n" +
+                                            "name = \"Default\"\n" +
+                                            "version = 1.0\n" +
+                                            "\n" +
+                                            "[colours]\n" +
+                                            "textRed = 255\n" +
+                                            "textGreen = 255\n" +
+                                            "textBlue = 255\n" +
+                                            "playerRed = 0\n" +
+                                            "playerGreen = 0\n" +
+                                            "playerBlue = 0\n";
+
+                            FileWriter writer = new FileWriter(defaultThemeFile);
+                            writer.append(defaultFile);
+                            writer.close();
+                        }
+                    } else {
+                        logger.error("Failed to create default theme file");
+                    }
+                } catch (IOException e) {
+                    logger.error("Failed to initialise themes! Error: ", e);
+                }
+            } else {
+                logger.error("Failed to create theme directory");
+            }
+        }*/
 
         logger.info("Checking if MediaMod is up-to-date...");
         VersionChecker.checkVersion();
 
-        authenticatedWithAPI = this.coreMod.register();
-
         logger.info("Loading Configuration...");
         Settings.loadConfig();
 
-        // Load Media Handlers
-        MediaHandler mediaHandler = MediaHandler.instance;
-        mediaHandler.loadAll();
+        Multithreading.runAsync(() -> {
+            logger.info("Attempting to connect with MediaMod API");
+
+            authenticatedWithAPI = APIHandler.instance.connect();
+
+            if (authenticatedWithAPI) {
+                logger.info("Connected with MediaMod API!");
+            } else {
+                logger.warn("Failed to connect with MediaMod API");
+            }
+
+            // Load services
+            MediaHandler mediaHandler = MediaHandler.instance;
+            mediaHandler.loadAll();
+        });
+
+        Runtime.getRuntime().addShutdownHook(new Thread("MediaMod Shutdown Thread") {
+            public void run() {
+                logger.info("Shutting down MediaMod");
+                new UpdaterUtility().performUpdate();
+                APIHandler.instance.shutdown();
+            }
+        });
     }
 
     /**
