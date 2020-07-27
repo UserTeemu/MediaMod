@@ -21,7 +21,7 @@ import java.io.IOException;
 public class LevelheadIntegration {
     @SubscribeEvent
     public void onMediaChange(MediaInfoUpdateEvent event) {
-        EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+        EntityPlayer player = FMLClientHandler.instance().getClient().player;
         if (player != null && event.mediaInfo != null && Settings.LEVELHEAD_ENABLED && MediaMod.INSTANCE.authenticatedWithAPI) {
             try {
                 JsonObject body = new JsonObject();

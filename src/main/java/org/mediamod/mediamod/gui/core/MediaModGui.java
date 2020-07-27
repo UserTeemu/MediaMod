@@ -1,10 +1,10 @@
 package org.mediamod.mediamod.gui.core;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.mediamod.mediamod.gui.core.util.ButtonTooltip;
 
@@ -37,7 +37,7 @@ public abstract class MediaModGui extends ButtonTooltip {
     }
 
     protected String getSuffix(boolean option, String label) {
-        return option ? (label + ": " + EnumChatFormatting.GREEN + I18n.format("menu.guimediamod.buttons.yes")) : (label + ": " + EnumChatFormatting.RED + I18n.format("menu.guimediamod.buttons.no"));
+        return option ? (label + ": " + ChatFormatting.GREEN + I18n.format("menu.guimediamod.buttons.yes")) : (label + ": " + ChatFormatting.RED + I18n.format("menu.guimediamod.buttons.no"));
     }
 
     protected int getRowPos(int rowNumber) {

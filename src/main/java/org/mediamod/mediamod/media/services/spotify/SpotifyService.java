@@ -253,7 +253,7 @@ class SpotifyAPI {
 
         JsonObject body = new JsonObject();
         body.addProperty("code", authCode);
-        body.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        body.addProperty("uuid", FMLClientHandler.instance().getClient().player.getUniqueID().toString());
         body.addProperty("secret", APIHandler.instance.requestSecret);
 
         try {

@@ -38,7 +38,7 @@ public class PartyManager {
 
         JsonObject requestBody = new JsonObject();
         requestBody.addProperty("secret", APIHandler.instance.requestSecret);
-        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().player.getUniqueID().toString());
 
         MediaInfo mediaInfo = MediaHandler.instance.getCurrentMediaInfo();
         if (mediaInfo != null) {
@@ -76,7 +76,7 @@ public class PartyManager {
 
         JsonObject requestBody = new JsonObject();
         requestBody.addProperty("secret", APIHandler.instance.requestSecret);
-        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().player.getUniqueID().toString());
         requestBody.addProperty("partyCode", partyCode);
 
         try {
@@ -105,7 +105,7 @@ public class PartyManager {
 
         JsonObject requestBody = new JsonObject();
         requestBody.addProperty("secret", APIHandler.instance.requestSecret);
-        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().player.getUniqueID().toString());
         requestBody.addProperty("partyCode", partyCode);
 
         if (isPartyHost) {
@@ -155,7 +155,7 @@ public class PartyManager {
 
         JsonObject requestBody = new JsonObject();
         requestBody.addProperty("secret", APIHandler.instance.requestSecret);
-        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().player.getUniqueID().toString());
         requestBody.addProperty("partyCode", partyCode);
 
         try {
@@ -182,7 +182,7 @@ public class PartyManager {
 
         JsonObject requestBody = new JsonObject();
         requestBody.addProperty("secret", APIHandler.instance.requestSecret);
-        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().thePlayer.getUniqueID().toString());
+        requestBody.addProperty("uuid", FMLClientHandler.instance().getClient().player.getUniqueID().toString());
         requestBody.addProperty("partySecret", partySecret);
         requestBody.addProperty("partyCode", partyCode);
 
