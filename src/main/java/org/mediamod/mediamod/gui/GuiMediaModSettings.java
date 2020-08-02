@@ -28,7 +28,9 @@ public class GuiMediaModSettings extends MediaModGui {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawDefaultBackground();
 
-        this.drawString(this.fontRenderer, I18n.format("menu.guimediamod.text.version.name") + " " + Metadata.VERSION, this.width - this.fontRenderer.getStringWidth("Version " + Metadata.VERSION) - 2, this.height - 10, -1);
+        drawString(fontRendererObj, "General settings", (width / 2) - 100, 60, -1);
+
+        this.drawString(this.fontRendererObj, I18n.format("menu.guimediamod.text.version.name") + " " + Metadata.VERSION, this.width - this.fontRendererObj.getStringWidth("Version " + Metadata.VERSION) - 2, this.height - 10, -1);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
