@@ -1,11 +1,13 @@
 package me.dreamhopping.mediamod.command;
 
 import me.dreamhopping.mediamod.gui.GuiMediaModSettings;
+import me.dreamhopping.mediamod.util.TickScheduler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import me.dreamhopping.mediamod.util.TickScheduler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,22 +20,22 @@ import java.util.List;
 public class MediaModCommand extends CommandBase {
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "mediamod";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "/mediamod";
     }
 
     @Override
-    public List<String> getCommandAliases() {
+    public List<String> getAliases() {
         return Arrays.asList("media", "mm");
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length <= 0) {
             TickScheduler.INSTANCE.schedule(1, () -> FMLClientHandler.instance().getClient().displayGuiScreen(new GuiMediaModSettings()));
         } else {
@@ -48,11 +50,6 @@ public class MediaModCommand extends CommandBase {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        return true;
     }
 
     @Override

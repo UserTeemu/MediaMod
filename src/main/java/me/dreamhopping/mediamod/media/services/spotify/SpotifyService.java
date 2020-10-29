@@ -215,7 +215,7 @@ class SpotifyAPI {
         PlayerMessenger.sendMessage(ChatColor.GRAY + "Logging into Spotify...", true);
 
         try {
-            SpotifyTokenResponse response = WebRequest.requestToMediaMod(WebRequestType.POST, "api/spotify/token", body, SpotifyTokenResponse.class);
+            SpotifyTokenResponse response = WebRequest.instance.post(new URL(MediaMod.ENDPOINT + "api/spotify/user/auth/" + authCode), SpotifyTokenResponse.class);
 
             if (response == null) {
                 MediaMod.INSTANCE.logger.error("An error occurred when exchanging authorisation code for a token: response was null");
@@ -246,13 +246,8 @@ class SpotifyAPI {
 
         if (refreshToken == null) return;
 
-        JsonObject body = new JsonObject();
-        body.addProperty("refresh_token", refreshToken);
-        body.addProperty("uuid", Minecraft.getMinecraft().getSession().getProfile().getId().toString());
-        body.addProperty("secret", APIHandler.instance.requestSecret);
-
         try {
-            SpotifyTokenResponse response = WebRequest.requestToMediaMod(WebRequestType.POST, "api/spotify/refresh", body, SpotifyTokenResponse.class);
+            SpotifyTokenResponse response = WebRequest.instance.post(new URL(MediaMod.ENDPOINT + "api/spotify/user/auth/" + refreshToken + "?refresh=true"), SpotifyTokenResponse.class);
 
             if (response == null) {
                 MediaMod.INSTANCE.logger.error("An error occurred when exchanging refresh token for a new token: response was null");
@@ -260,7 +255,6 @@ class SpotifyAPI {
             }
 
             accessToken = response.accessToken;
-            refreshToken = response.refreshToken;
 
             Settings.REFRESH_TOKEN = refreshToken;
             Multithreading.runAsync(Settings::saveConfig);
@@ -293,7 +287,7 @@ class SpotifyAPI {
     public MediaInfo getUserPlaybackInfo() {
         MediaInfo info = null;
         try {
-            info = WebRequest.makeRequest(WebRequestType.GET, new URL("https://api.spotify.com/v1/me/player/currently-playing"), MediaInfo.class, new HashMap<String, String>() {{
+            info = WebRequest.instance.get(new URL("https://api.spotify.com/v1/me/player/currently-playing"), MediaInfo.class, new HashMap<String, String>() {{
                 put("Authorization", "Bearer " + accessToken);
             }});
         } catch (IOException e) {
@@ -318,7 +312,7 @@ class SpotifyAPI {
      */
     public boolean nextTrack() {
         try {
-            int status = WebRequest.makeRequest(WebRequestType.POST, new URL("https://api.spotify.com/v1/me/player/next"), new HashMap<String, String>() {{
+            int status = WebRequest.instance.post(new URL("https://api.spotify.com/v1/me/player/next"), new HashMap<String, String>() {{
                 put("Authorization", "Bearer " + accessToken);
             }});
 
@@ -336,7 +330,7 @@ class SpotifyAPI {
      */
     public boolean resumePlayback() {
         try {
-            int status = WebRequest.makeRequest(WebRequestType.PUT, new URL("https://api.spotify.com/v1/me/player/play"), new HashMap<String, String>() {{
+            int status = WebRequest.instance.put(new URL("https://api.spotify.com/v1/me/player/play"), new HashMap<String, String>() {{
                 put("Authorization", "Bearer " + accessToken);
             }});
 
@@ -346,13 +340,13 @@ class SpotifyAPI {
         }
     }
 
-    /**
-     * Tell Spotify to play a track identifier at a certain timestamp
-     *
-     * @return if the operation was successful
+    /*
+      Tell Spotify to play a track identifier at a certain timestamp
+
+      @return if the operation was successful
      * @see "https://developer.spotify.com/documentation/web-api/reference/player/start-a-users-playback/"
      */
-    public boolean playTrack(String trackID, int timestamp) {
+    /* public boolean playTrack(String trackID, int timestamp) {
         try {
             JsonArray array = new JsonArray();
             array.add(new JsonPrimitive("spotify:track:" + trackID));
@@ -370,17 +364,17 @@ class SpotifyAPI {
             e.printStackTrace();
             return false;
         }
-    }
+    } */
 
     /**
      * Pauses the playback
      *
      * @return if the operation was successful
-     * @see "https://developer.spotify.com/documentation/web-api/reference/player/skip-users-playback-to-next-track/"
+     * @see "https://developer.spotify.com/documentation/web-api/reference/player/pause-a-users-playback/"
      */
     public boolean pausePlayback() {
         try {
-            int status = WebRequest.makeRequest(WebRequestType.PUT, new URL("https://api.spotify.com/v1/me/player/pause"), new HashMap<String, String>() {{
+            int status = WebRequest.instance.put(new URL("https://api.spotify.com/v1/me/player/pause"), new HashMap<String, String>() {{
                 put("Authorization", "Bearer " + accessToken);
             }});
 

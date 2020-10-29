@@ -45,14 +45,14 @@ public class GuiMediaPlayer extends GuiScreen {
                 }
 
                 drawModalRectWithCustomSizedTexture(50 + (70 * GuiMediaPlayerManager.instance.previousTracks.indexOf(previousTrack)), height - 100, 0, 0, 50, 50, 50, 50);
-                drawCenteredString(fontRendererObj, previousTrack.name.substring(0, (Math.min(previousTrack.name.length(), 9))), 75 + (70 * GuiMediaPlayerManager.instance.previousTracks.indexOf(previousTrack)), height - 45, -1);
+                drawCenteredString(fontRenderer, previousTrack.name.substring(0, (Math.min(previousTrack.name.length(), 9))), 75 + (70 * GuiMediaPlayerManager.instance.previousTracks.indexOf(previousTrack)), height - 45, -1);
             }
         }
 
         GlStateManager.popMatrix();
 
-        drawCenteredString(fontRendererObj, GuiMediaPlayerManager.instance.currentTrack != null ? GuiMediaPlayerManager.instance.currentTrack.name : "No track playing", width / 2, 110, -1);
-        drawCenteredString(fontRendererObj, GuiMediaPlayerManager.instance.currentTrack != null ? GuiMediaPlayerManager.instance.currentTrack.artists[0].name : "", width / 2, 120, Color.LIGHT_GRAY.getRGB());
+        drawCenteredString(fontRenderer, GuiMediaPlayerManager.instance.currentTrack != null ? GuiMediaPlayerManager.instance.currentTrack.name : "No track playing", width / 2, 110, -1);
+        drawCenteredString(fontRenderer, GuiMediaPlayerManager.instance.currentTrack != null ? GuiMediaPlayerManager.instance.currentTrack.artists[0].name : "", width / 2, 120, Color.LIGHT_GRAY.getRGB());
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

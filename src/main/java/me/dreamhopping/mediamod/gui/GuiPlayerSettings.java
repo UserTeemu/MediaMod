@@ -1,12 +1,12 @@
 package me.dreamhopping.mediamod.gui;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.dreamhopping.mediamod.gui.core.util.ButtonTooltip;
 import me.dreamhopping.mediamod.gui.core.util.IMediaGui;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumChatFormatting;
 import me.dreamhopping.mediamod.config.ProgressStyle;
 import me.dreamhopping.mediamod.config.Settings;
 import me.dreamhopping.mediamod.gui.core.util.CustomButton;
@@ -24,7 +24,7 @@ class GuiPlayerSettings extends ButtonTooltip implements IMediaGui {
         this.buttonList.add(new CustomButton(2, width / 2 + 10, getRowPos(0), getSuffix(Settings.AUTO_COLOR_SELECTION, I18n.format("menu.guiplayersettings.buttons.colorSelection.name"))));
         this.buttonList.add(new CustomButton(3, width / 2 - 120, getRowPos(1), getSuffix(Settings.MODERN_PLAYER_STYLE, I18n.format("menu.guiplayersettings.buttons.modernPlayer.name"))));
         this.buttonList.add(new CustomButton(4, width / 2 + 10, getRowPos(1), I18n.format("menu.guiplayersettings.buttons.position.name")));
-        this.buttonList.add(new CustomButton(5, width / 2 - 120, getRowPos(2), 250, 20, I18n.format("menu.guiplayersettings.buttons.progressStyle.name") + " " /* Minecraft's .lang files don't support trailing spaces */ + TextFormatting.GREEN + I18n.format("menu.guiplayersettings.buttons.progressStyle." + Settings.PROGRESS_STYLE.name().toLowerCase())));
+        this.buttonList.add(new CustomButton(5, width / 2 - 120, getRowPos(2), 250, 20, I18n.format("menu.guiplayersettings.buttons.progressStyle.name") + " " /* Minecraft's .lang files don't support trailing spaces */ + ChatFormatting.GREEN + I18n.format("menu.guiplayersettings.buttons.progressStyle." + Settings.PROGRESS_STYLE.name().toLowerCase())));
 
         for (GuiButton button : buttonList) {
             if (button.id != 0 && button.id != 5) {
@@ -103,7 +103,7 @@ class GuiPlayerSettings extends ButtonTooltip implements IMediaGui {
                     nextIndex = 0;
                 }
                 Settings.PROGRESS_STYLE = ProgressStyle.values()[nextIndex];
-                button.displayString = I18n.format("menu.guiplayersettings.buttons.progressStyle.name") + " " + TextFormatting.GREEN + I18n.format("menu.guiplayersettings.buttons.progressStyle." + Settings.PROGRESS_STYLE.name().toLowerCase());
+                button.displayString = I18n.format("menu.guiplayersettings.buttons.progressStyle.name") + " " + ChatFormatting.GREEN + I18n.format("menu.guiplayersettings.buttons.progressStyle." + Settings.PROGRESS_STYLE.name().toLowerCase());
                 break;
         }
     }
